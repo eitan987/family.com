@@ -1,150 +1,231 @@
-const parentPassword = "1234";
+// script.js
+
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+let currentUser = null;
 let isParent = false;
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-let events = JSON.parse(localStorage.getItem("events")) || [];
+let familyId = "family1"; // אפשר לשנות לפי הצורך
+let tasks = [];
+let events = [];
+let messages = [];
+let currentDate = new Date();
+let selectedDate = null;
 
-function saveToStorage() {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    localStorage.setItem("events", JSON.stringify(events));
-}
+const db = window.db;
+const docRef = () => doc(db, "families", familyId);
 
-function checkPassword() {
-    const input = document.getElementById("password").value;
-    if (input === parentPassword) {
-        isParent = true;
-        enterSite("הורה");
-    } else {
-        alert("סיסמה שגויה!");
-    }
-}
-
-function enterAsKid() {
-    isParent = false;
-    enterSite("ילד");
-}
-
-function enterSite(userType) {
-    document.getElementById("login-page").style.display = "none";
-    document.getElementById("main-page").style.display = "block";
-    document.getElementById("user-type").textContent = `מחובר כ-${userType}`;
-    if (isParent) {
-        document.getElementById("parent-task-controls").style.display = "block";
-        document.getElementById("parent-event-controls").style.display = "block";
-    }
-    renderTasks();
-    renderEvents();
-    alert(`ברוך הבא כ-${userType}! ${isParent ? "אתה יכול לערוך, להוסיף ולמחוק משימות ואירועים" : "אתה יכול לראות אירועים ולסמן משימות"}`);
-}
-
-document.getElementById("menu-btn").addEventListener("click", function() {
-    const menu = document.getElementById("menu");
-    menu.classList.toggle("visible");
-    menu.classList.toggle("hidden");
-});
-
-function showSection(section) {
-    document.getElementById("tasks").style.display = section === "tasks" ? "block" : "none";
-    document.getElementById("events").style.display = section === "events" ? "block" : "none";
-}
-
-// משימות
-function addTask() {
-    if (!isParent) return alert("רק הורים יכולים להוסיף משימות!");
-    const taskInput = document.getElementById("new-task");
-    const taskText = taskInput.value.trim();
-    if (taskText) {
-        tasks.push({ text: taskText, completed: false });
-        taskInput.value = "";
-        renderTasks();
-        saveToStorage();
-    }
-}
-
-function editTask(index) {
-    if (!isParent) return alert("רק הורים יכולים לערוך משימות!");
-    const newText = prompt("ערוך את המשימה:", tasks[index].text);
-    if (newText !== null && newText.trim()) {
-        tasks[index].text = newText.trim();
-        renderTasks();
-        saveToStorage();
-    }
-}
-
-function removeTask(index) {
-    if (!isParent) return alert("רק הורים יכולים למחוק משימות!");
-    tasks.splice(index, 1);
-    renderTasks();
-    saveToStorage();
-}
-
-function toggleTask(index) {
-    if (isParent) return alert("רק ילדים יכולים לסמן משימות!");
-    tasks[index].completed = !tasks[index].completed;
-    renderTasks();
-    saveToStorage();
-}
-
-function renderTasks() {
-    const taskList = document.getElementById("task-list");
-    taskList.innerHTML = "";
-    tasks.forEach((task, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-            <span class="${task.completed ? 'completed' : ''}">${task.text}</span>
-            ${isParent ? `<button onclick="editTask(${index})">ערוך</button><button onclick="removeTask(${index})">מחק</button>` : 
-                         `<button onclick="toggleTask(${index})">${task.completed ? 'בטל' : 'בוצע'}</button>`}
-        `;
-        taskList.appendChild(li);
-    });
-}
-
-// אירועים
-function addEvent() {
-    if (!isParent) return alert("רק הורים יכולים להוסיף אירועים!");
-    const eventInput = document.getElementById("new-event");
-    const eventText = eventInput.value.trim();
-    if (eventText) {
-        events.push(eventText);
-        eventInput.value = "";
-        renderEvents();
-        saveToStorage();
-    }
-}
-
-function editEvent(index) {
-    if (!isParent) return alert("רק הורים יכולים לערוך אירועים!");
-    const newText = prompt("ערוך את האירוע:", events[index]);
-    if (newText !== null && newText.trim()) {
-        events[index] = newText.trim();
-        renderEvents();
-        saveToStorage();
-    }
-}
-
-function removeEvent(index) {
-    if (!isParent) return alert("רק הורים יכולים למחוק אירועים!");
-    events.splice(index, 1);
-    renderEvents();
-    saveToStorage();
-}
-
-function renderEvents() {
-    const eventList = document.getElementById("event-list");
-    eventList.innerHTML = "";
-    events.forEach((event, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-            <span>${event}</span>
-            ${isParent ? `<button onclick="editEvent(${index})">ערוך</button><button onclick="removeEvent(${index})">מחק</button>` : ''}
-        `;
-        eventList.appendChild(li);
-    });
+function login(user, parent) {
+  currentUser = user;
+  isParent = parent;
+  document.getElementById("login-page").style.display = "none";
+  document.getElementById("main-page").style.display = "block";
+  document.getElementById("user-type").textContent = user;
+  if (isParent) {
+    document.getElementById("parent-task-controls").style.display = "block";
+    document.getElementById("parent-event-controls").style.display = "block";
+    document.getElementById("parent-reminder-controls").style.display = "block";
+  }
+  loadData();
 }
 
 function logout() {
-    document.getElementById("main-page").style.display = "none";
-    document.getElementById("login-page").style.display = "block";
-    document.getElementById("password").value = "";
-    document.getElementById("tasks").style.display = "none";
-    document.getElementById("events").style.display = "none";
+  currentUser = null;
+  isParent = false;
+  document.getElementById("main-page").style.display = "none";
+  location.reload();
 }
+
+function showSection(section) {
+  const sections = ["tasks", "events", "messages"];
+  sections.forEach(id => {
+    document.getElementById(id).style.display = (id === section) ? "block" : "none";
+  });
+  if (section === "events") renderCalendar();
+  if (section === "messages") renderMessages();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("menu-btn")?.addEventListener("click", () => {
+    const menu = document.getElementById("menu");
+    menu.classList.toggle("visible");
+    menu.classList.toggle("hidden");
+  });
+});
+
+async function loadData() {
+  const snap = await getDoc(docRef());
+  if (snap.exists()) {
+    const data = snap.data();
+    tasks = data.tasks || [];
+    events = data.events || [];
+    messages = data.messages || [];
+    renderTasks();
+    renderCalendar();
+    renderMessages();
+  }
+}
+
+async function saveData() {
+  await setDoc(docRef(), { tasks, events, messages });
+}
+
+function addTask() {
+  const input = document.getElementById("new-task");
+  const text = input.value.trim();
+  if (text) {
+    tasks.push({ text, completed: false });
+    input.value = "";
+    renderTasks();
+    saveData();
+  }
+}
+
+function renderTasks() {
+  const list = document.getElementById("task-list");
+  list.innerHTML = "";
+  tasks.forEach((task, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="${task.completed ? 'completed' : ''}">${task.text}</span>`;
+    if (isParent) {
+      li.innerHTML += `<button onclick="editTask(${i})">ערוך</button><button onclick="removeTask(${i})">מחק</button>`;
+    } else {
+      li.innerHTML += `<button onclick="toggleTask(${i})">${task.completed ? 'בטל' : 'בוצע'}</button>`;
+    }
+    list.appendChild(li);
+  });
+}
+
+function editTask(i) {
+  const text = prompt("ערוך את המשימה:", tasks[i].text);
+  if (text !== null) {
+    tasks[i].text = text.trim();
+    renderTasks();
+    saveData();
+  }
+}
+
+function removeTask(i) {
+  tasks.splice(i, 1);
+  renderTasks();
+  saveData();
+}
+
+function toggleTask(i) {
+  tasks[i].completed = !tasks[i].completed;
+  renderTasks();
+  saveData();
+}
+
+function renderCalendar() {
+  const calendar = document.getElementById("calendar");
+  const monthLabel = document.getElementById("current-month");
+  calendar.innerHTML = "";
+
+  const monthNames = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+  monthLabel.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    calendar.appendChild(document.createElement("div"));
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasEvents = events.some(e => e.date === dateStr);
+    const day = document.createElement("div");
+    day.textContent = d;
+    if (hasEvents) day.classList.add("has-events");
+    day.onclick = () => selectDay(d, dateStr);
+    calendar.appendChild(day);
+  }
+}
+
+function previousMonth() {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+}
+
+function nextMonth() {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+}
+
+function selectDay(day, dateStr) {
+  selectedDate = dateStr;
+  document.getElementById("selected-day-events").style.display = "block";
+  document.getElementById("selected-day-title").textContent = `אירועים לתאריך ${day}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+  renderEvents();
+}
+
+function addEvent() {
+  const input = document.getElementById("new-event");
+  const text = input.value.trim();
+  if (text && selectedDate) {
+    events.push({ date: selectedDate, text });
+    input.value = "";
+    renderEvents();
+    renderCalendar();
+    saveData();
+  }
+}
+
+function renderEvents() {
+  const list = document.getElementById("event-list");
+  list.innerHTML = "";
+  const dayEvents = events.filter(e => e.date === selectedDate);
+  dayEvents.forEach((event, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${event.text}</span>`;
+    if (isParent) li.innerHTML += `<button onclick="removeEvent(${i})">מחק</button>`;
+    list.appendChild(li);
+  });
+}
+
+function removeEvent(i) {
+  const actualIndex = events.findIndex(e => e.date === selectedDate && e.text === events[i].text);
+  events.splice(actualIndex, 1);
+  renderEvents();
+  renderCalendar();
+  saveData();
+}
+
+function sendManualReminder() {
+  alert("הורים שלחו תזכורת! אל תשכח לבדוק את המשימות שלך.");
+}
+
+function sendMessage() {
+  const input = document.getElementById("new-message");
+  const text = input.value.trim();
+  if (text) {
+    messages.push({ user: currentUser, text, time: new Date().toISOString() });
+    input.value = "";
+    renderMessages();
+    saveData();
+  }
+}
+
+function renderMessages() {
+  const list = document.getElementById("message-list");
+  list.innerHTML = "";
+  messages.forEach(msg => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${msg.user}:</span> ${msg.text}`;
+    list.appendChild(li);
+  });
+}
+
+window.login = login;
+window.logout = logout;
+window.showSection = showSection;
+window.addTask = addTask;
+window.editTask = editTask;
+window.removeTask = removeTask;
+window.toggleTask = toggleTask;
+window.previousMonth = previousMonth;
+window.nextMonth = nextMonth;
+window.addEvent = addEvent;
+window.removeEvent = removeEvent;
+window.sendManualReminder = sendManualReminder;
+window.sendMessage = sendMessage;

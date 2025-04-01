@@ -1,54 +1,74 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>האתר המשפחתי שלנו</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="login-page">
-        <h1>ברוכים הבאים לאתר המשפחתי</h1>
-        <input type="password" id="password" placeholder="סיסמה להורים (1234)">
-        <button onclick="checkPassword()">כניסה כהורה</button>
-        <button onclick="enterAsKid()">כניסה כילד</button>
-    Robinhood
-    </div>
-
-    <div id="main-page" style="display: none;">
-        <header>
-            <span id="user-type"></span>
-            <button id="menu-btn">☰ תפריט</button>
-        </header>
-        
-        <nav id="menu" class="hidden">
-            <ul>
-                <li><a href="#" onclick="showSection('tasks')">יומן משימות</a></li>
-                <li><a href="#" onclick="showSection('events')">אירועים</a></li>
-                <li><a href="#" onclick="logout()">התנתק</a></li>
-            </ul>
-        </nav>
-
-        <div id="content">
-            <div id="tasks" style="display: none;">
-                <h2>יומן משימות</h2>
-                <div id="parent-task-controls" style="display: none;">
-                    <input type="text" id="new-task" placeholder="משימה חדשה">
-                    <button onclick="addTask()">הוסף</button>
-                </div>
-                <ul id="task-list"></ul>
-            </div>
-            <div id="events" style="display: none;">
-                <h2>אירועים</h2>
-                <div id="parent-event-controls" style="display: none;">
-                    <input type="text" id="new-event" placeholder="אירוע חדש">
-                    <button onclick="addEvent()">הוסף</button>
-                </div>
-                <ul id="event-list"></ul>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Family.com</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script defer>
+      function showTab(tabId) {
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        document.getElementById(tabId).classList.add("active");
+        const index = ["tasks", "events", "messages"].indexOf(tabId);
+        document.querySelectorAll(".tab-btn")[index].classList.add("active");
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="logo">Family<span>.com</span></div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="showTab('tasks')">משימות</button>
+          <button class="tab-btn" onclick="showTab('events')">אירועים</button>
+          <button class="tab-btn" onclick="showTab('messages')">הודעות</button>
         </div>
-    </div>
+      </header>
 
-    <script src="script.js"></script>
-</body>
+      <main>
+        <section id="tasks" class="tab active">
+          <h2>משימות</h2>
+          <div class="input-group">
+            <input type="text" placeholder="משימה חדשה" />
+            <button>הוסף</button>
+          </div>
+          <ul class="item-list">
+            <li>לדוגמה: לסדר את החדר</li>
+          </ul>
+        </section>
+
+        <section id="events" class="tab">
+          <h2>אירועים</h2>
+          <div class="calendar-controls">
+            <button>חודש קודם</button>
+            <span>אפריל 2025</span>
+            <button>חודש הבא</button>
+          </div>
+          <ul class="item-list">
+            <li>לדוגמה: יום הולדת לרני</li>
+          </ul>
+        </section>
+
+        <section id="messages" class="tab">
+          <h2>הודעות</h2>
+          <div class="input-group">
+            <input type="text" placeholder="כתוב הודעה..." />
+            <button>שלח</button>
+          </div>
+          <ul class="item-list">
+            <li>אמא: אל תשכחו להביא את המחברת!</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </body>
 </html>
