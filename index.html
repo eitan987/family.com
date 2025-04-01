@@ -1,74 +1,90 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Family.com</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <script defer>
-      function showTab(tabId) {
-        document.querySelectorAll(".tab").forEach((tab) => {
-          tab.classList.remove("active");
-        });
-        document.querySelectorAll(".tab-btn").forEach((btn) => {
-          btn.classList.remove("active");
-        });
-        document.getElementById(tabId).classList.add("active");
-        const index = ["tasks", "events", "messages"].indexOf(tabId);
-        document.querySelectorAll(".tab-btn")[index].classList.add("active");
-      }
-    </script>
-  </head>
-  <body>
-    <div id="app">
-      <header>
-        <div class="logo">Family<span>.com</span></div>
-        <div class="tabs">
-          <button class="tab-btn active" onclick="showTab('tasks')">משימות</button>
-          <button class="tab-btn" onclick="showTab('events')">אירועים</button>
-          <button class="tab-btn" onclick="showTab('messages')">הודעות</button>
-        </div>
-      </header>
-
-      <main>
-        <section id="tasks" class="tab active">
-          <h2>משימות</h2>
-          <div class="input-group">
-            <input type="text" placeholder="משימה חדשה" />
-            <button>הוסף</button>
-          </div>
-          <ul class="item-list">
-            <li>לדוגמה: לסדר את החדר</li>
-          </ul>
-        </section>
-
-        <section id="events" class="tab">
-          <h2>אירועים</h2>
-          <div class="calendar-controls">
-            <button>חודש קודם</button>
-            <span>אפריל 2025</span>
-            <button>חודש הבא</button>
-          </div>
-          <ul class="item-list">
-            <li>לדוגמה: יום הולדת לרני</li>
-          </ul>
-        </section>
-
-        <section id="messages" class="tab">
-          <h2>הודעות</h2>
-          <div class="input-group">
-            <input type="text" placeholder="כתוב הודעה..." />
-            <button>שלח</button>
-          </div>
-          <ul class="item-list">
-            <li>אמא: אל תשכחו להביא את המחברת!</li>
-          </ul>
-        </section>
-      </main>
+<head>
+  <script type="module" src="/firebase-setup.js"></script>
+  <script type="module" src="/script.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>האתר המשפחתי שלנו</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="login-page" class="fade-in">
+    <div class="login-container">
+      <h1>ברוכים הבאים לאתר המשפחתי</h1>
+      <h3>מי את/ה?</h3>
+      <div class="user-list">
+        <button onclick="login('אבא', true)">אבא</button>
+        <button onclick="login('אמא', true)">אמא</button>
+        <button onclick="login('יהונתן', false)">יהונתן</button>
+        <button onclick="login('רוני', false)">רוני</button>
+        <button onclick="login('טל', false)">טל</button>
+        <button onclick="login('רתם', false)">רתם</button>
+        <button onclick="login('איתן', false)">איתן</button>
+        <button onclick="login('רני', false)">רני</button>
+      </div>
     </div>
-  </body>
+  </div>
+
+  <div id="main-page" style="display: none" class="fade-in">
+    <header>
+      <div class="logo">family<span>.com</span></div>
+      <div class="user-info">
+        <span id="user-type"></span>
+      </div>
+      <button id="menu-btn">☰</button>
+    </header>
+
+    <nav id="menu" class="hidden">
+      <ul>
+        <li><a href="#" onclick="showSection('tasks')">משימות</a></li>
+        <li><a href="#" onclick="showSection('events')">אירועים</a></li>
+        <li><a href="#" onclick="showSection('messages')">הודעות</a></li>
+        <li><a href="#" onclick="logout()">התנתק</a></li>
+      </ul>
+    </nav>
+
+    <div id="content" class="carousel-container">
+      <div id="tasks" class="section-card carousel-item">
+        <h2>משימות</h2>
+        <div id="parent-reminder-controls" style="display:none; margin-bottom: 10px;">
+          <button onclick="sendManualReminder()">שלח תזכורת לילדים</button>
+        </div>
+        <div id="parent-task-controls" style="display:none" class="input-group">
+          <input type="text" id="new-task" placeholder="משימה חדשה" />
+          <button onclick="addTask()">הוסף</button>
+        </div>
+        <ul id="task-list" class="item-list"></ul>
+      </div>
+
+      <div id="events" class="section-card carousel-item">
+        <h2>אירועים</h2>
+        <div class="calendar-controls">
+          <button onclick="previousMonth()">חודש קודם</button>
+          <span id="current-month"></span>
+          <button onclick="nextMonth()">חודש הבא</button>
+        </div>
+        <div id="calendar" class="calendar"></div>
+        <div id="selected-day-events" style="display:none">
+          <h3 id="selected-day-title"></h3>
+          <div id="parent-event-controls" style="display:none" class="input-group">
+            <input type="text" id="new-event" placeholder="אירוע חדש" />
+            <button onclick="addEvent()">הוסף</button>
+          </div>
+          <ul id="event-list" class="item-list"></ul>
+        </div>
+      </div>
+
+      <div id="messages" class="section-card carousel-item">
+        <h2>הודעות</h2>
+        <div class="input-group">
+          <input type="text" id="new-message" placeholder="הקלד הודעה..." />
+          <button onclick="sendMessage()">שלח</button>
+        </div>
+        <ul id="message-list" class="item-list"></ul>
+      </div>
+    </div>
+  </div>
+</body>
 </html>
