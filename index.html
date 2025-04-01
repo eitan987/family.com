@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>האתר המשפחתי שלנו</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="login-page">
+        <h1>ברוכים הבאים לאתר המשפחתי</h1>
+        <input type="password" id="password" placeholder="סיסמה להורים (1234)">
+        <button onclick="checkPassword()">כניסה כהורה</button>
+        <button onclick="enterAsKid()">כניסה כילד</button>
+    Robinhood
+    </div>
+
+    <div id="main-page" style="display: none;">
+        <header>
+            <span id="user-type"></span>
+            <button id="menu-btn">☰ תפריט</button>
+        </header>
+        
+        <nav id="menu" class="hidden">
+            <ul>
+                <li><a href="#" onclick="showSection('tasks')">יומן משימות</a></li>
+                <li><a href="#" onclick="showSection('events')">אירועים</a></li>
+                <li><a href="#" onclick="logout()">התנתק</a></li>
+            </ul>
+        </nav>
+
+        <div id="content">
+            <div id="tasks" style="display: none;">
+                <h2>יומן משימות</h2>
+                <div id="parent-task-controls" style="display: none;">
+                    <input type="text" id="new-task" placeholder="משימה חדשה">
+                    <button onclick="addTask()">הוסף</button>
+                </div>
+                <ul id="task-list"></ul>
+            </div>
+            <div id="events" style="display: none;">
+                <h2>אירועים</h2>
+                <div id="parent-event-controls" style="display: none;">
+                    <input type="text" id="new-event" placeholder="אירוע חדש">
+                    <button onclick="addEvent()">הוסף</button>
+                </div>
+                <ul id="event-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
