@@ -32,7 +32,7 @@ app.get('/data', (req, res) => {
 
 app.post('/data', (req, res) => {
     data = req.body;
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data));
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
     res.sendStatus(200);
 });
 
