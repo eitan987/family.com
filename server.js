@@ -7,31 +7,24 @@ app.use(express.static('public'));
 
 const DATA_FILE = 'data.json';
 
-let data = {
-    tasks: [],
-    events: [],
-    balances: {
-        "אבא": 0,
-        "אמא": 0,
-        "יהונתן": 0,
-        "טל": 0,
-        "רתם": 0,
-        "איתן": 0,
-        "רני": 0
-    },
-    storeItems: []
-};
-
+let data = {};
 if (fs.existsSync(DATA_FILE)) {
     data = JSON.parse(fs.readFileSync(DATA_FILE));
 }
 
-app.get('/data', (req, res) => {
-    res.json(data);
+app.get('/data/:familyId', (req, res) => {
+    const { familyId } = req.params;
+    if (data[familyId]) {
+        res.json(data[familyId]);
+    } else {
+        data[familyId] = { tasks: [], events: [], balances: {}, storeItems: [] };
+        res.json(data[familyId]);
+    }
 });
 
-app.post('/data', (req, res) => {
-    data = req.body;
+app.post('/data/:familyId', (req, res) => {
+    const { familyId } = req.params;
+    data[familyId] = req.body;
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
     res.sendStatus(200);
 });
