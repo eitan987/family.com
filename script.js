@@ -1,24 +1,13 @@
-""let currentUser = null;
+// script.js — גרסה מלאה עם Firebase
+
+let currentUser = null;
 let isParent = false;
 let tasks = [];
 let events = [];
-let messages = [];
 let currentDate = new Date();
 let selectedDate = null;
-let familyId = "main";
-
-import { getDoc, setDoc, doc, getFirestore } from "./firebase-setup.js";
-const db = getFirestore();
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".user-list button").forEach(button => {
-    button.addEventListener("click", () => {
-      const user = button.textContent;
-      const isParentUser = user === "אבא" || user === "אמא";
-      login(user, isParentUser);
-    });
-  });
-
   document.getElementById("menu-btn")?.addEventListener("click", () => {
     const menu = document.getElementById("menu");
     menu.classList.toggle("visible");
@@ -33,98 +22,112 @@ function login(user, parent) {
   document.getElementById("main-page").style.display = "block";
   document.getElementById("user-type").textContent = user;
   if (isParent) {
-    document.getElementById("parent-task-controls").style.display = "flex";
-    document.getElementById("parent-event-controls").style.display = "flex";
-    document.getElementById("parent-reminder-controls").style.display = "block";
+    document.getElementById("parent-task-controls").style.display = "block";
+    document.getElementById("parent-event-controls").style.display = "block";
   }
   loadData();
 }
 
 function showSection(section) {
-  const sections = ["tasks", "events", "messages"];
-  const index = sections.indexOf(section);
-  if (index !== -1) {
-    document.querySelector(".carousel-container").scrollTo({
-      left: index * window.innerWidth,
-      behavior: "smooth"
-    });
-  }
+  document.getElementById("tasks").style.display = section === "tasks" ? "block" : "none";
+  document.getElementById("events").style.display = section === "events" ? "block" : "none";
+  if (section === "events") renderCalendar();
 }
 
 async function loadData() {
-  const snap = await getDoc(doc(db, "families", familyId));
+  const snap = await getDoc(doc(db, "family", "main"));
   if (snap.exists()) {
     const data = snap.data();
     tasks = data.tasks || [];
     events = data.events || [];
-    messages = data.messages || [];
     renderTasks();
-    renderCalendar();
-    renderMessages();
+    if (document.getElementById("events").style.display === "block") renderCalendar();
   }
 }
 
 async function saveData() {
-  await setDoc(doc(db, "families", familyId), { tasks, events, messages });
+  await setDoc(doc(db, "family", "main"), { tasks, events });
 }
 
 function addTask() {
-  const input = document.getElementById("new-task");
-  const text = input.value.trim();
-  if (text) {
-    tasks.push({ text, completed: false });
-    input.value = "";
+  if (!isParent) return alert("רק הורים יכולים להוסיף משימות!");
+  const taskInput = document.getElementById("new-task");
+  const taskText = taskInput.value.trim();
+  if (taskText) {
+    tasks.push({ text: taskText, completed: false });
+    taskInput.value = "";
     renderTasks();
     saveData();
   }
 }
 
 function renderTasks() {
-  const list = document.getElementById("task-list");
-  list.innerHTML = "";
-  tasks.forEach((task, i) => {
+  const taskList = document.getElementById("task-list");
+  taskList.innerHTML = "";
+  tasks.forEach((task, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <span class="${task.completed ? "completed" : ""}">${task.text}</span>
-      ${isParent ? `<button onclick="removeTask(${i})">מחק</button>` : `<button onclick="toggleTask(${i})">${task.completed ? "בטל" : "בוצע"}</button>`}
+      <span class="${task.completed ? 'completed' : ''}">${task.text}</span>
+      ${isParent ? `<button onclick="editTask(${index})">ערוך</button><button onclick="removeTask(${index})">מחק</button>` : `<button onclick="toggleTask(${index})">${task.completed ? 'בטל' : 'בוצע'}</button>`}
     `;
-    list.appendChild(li);
+    taskList.appendChild(li);
   });
 }
 
-function toggleTask(i) {
-  tasks[i].completed = !tasks[i].completed;
+function editTask(index) {
+  const newText = prompt("ערוך את המשימה:", tasks[index].text);
+  if (newText !== null && newText.trim()) {
+    tasks[index].text = newText.trim();
+    renderTasks();
+    saveData();
+  }
+}
+
+function removeTask(index) {
+  tasks.splice(index, 1);
   renderTasks();
   saveData();
 }
 
-function removeTask(i) {
-  tasks.splice(i, 1);
+function toggleTask(index) {
+  tasks[index].completed = !tasks[index].completed;
   renderTasks();
   saveData();
 }
 
 function renderCalendar() {
-  const cal = document.getElementById("calendar");
-  const monthText = document.getElementById("current-month");
-  cal.innerHTML = "";
+  const calendar = document.getElementById("calendar");
+  const currentMonthDisplay = document.getElementById("current-month");
+  calendar.innerHTML = "";
+
   const monthNames = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
-  monthText.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+  currentMonthDisplay.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+  const daysOfWeek = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+  daysOfWeek.forEach(day => {
+    const dayHeader = document.createElement("div");
+    dayHeader.className = "day-header";
+    dayHeader.textContent = day;
+    calendar.appendChild(dayHeader);
+  });
 
   const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
 
   for (let i = 0; i < firstDay; i++) {
-    cal.appendChild(document.createElement("div"));
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    calendar.appendChild(empty);
   }
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${currentDate.getFullYear()}-${(currentDate.getMonth()+1).toString().padStart(2,"0")}-${d.toString().padStart(2,"0")}`;
-    const has = events.some(e => e.date === dateStr);
-    const div = document.createElement("div");
-    div.textContent = d;
-    if (has) div.className = "has-events";
-    div.onclick = () => selectDay(d, dateStr);
-    cal.appendChild(div);
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const hasEvents = events.some(e => e.date === dateStr);
+    const dayElement = document.createElement("div");
+    dayElement.textContent = day;
+    if (hasEvents) dayElement.className = "has-events";
+    dayElement.onclick = () => selectDay(day, dateStr);
+    calendar.appendChild(dayElement);
   }
 }
 
@@ -146,8 +149,10 @@ function selectDay(day, dateStr) {
 }
 
 function addEvent() {
+  if (!isParent) return alert("רק הורים יכולים להוסיף אירועים!");
+  if (!selectedDate) return alert("בחר יום בלוח השנה!");
   const text = document.getElementById("new-event").value.trim();
-  if (text && selectedDate) {
+  if (text) {
     events.push({ date: selectedDate, text });
     document.getElementById("new-event").value = "";
     renderEvents();
@@ -159,68 +164,41 @@ function addEvent() {
 function renderEvents() {
   const list = document.getElementById("event-list");
   list.innerHTML = "";
-  const filtered = events.filter(e => e.date === selectedDate);
-  filtered.forEach((event, i) => {
+  const dayEvents = events.filter(e => e.date === selectedDate);
+  dayEvents.forEach((event, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
       <span>${event.text}</span>
-      ${isParent ? `<button onclick="removeEvent(${i})">מחק</button>` : ""}
+      ${isParent ? `<button onclick="removeEvent(${index})">מחק</button>` : ''}
     `;
     list.appendChild(li);
   });
 }
 
-function removeEvent(i) {
-  const actualIndex = events.findIndex(e => e.date === selectedDate && e.text === events[i].text);
-  if (actualIndex !== -1) {
-    events.splice(actualIndex, 1);
-    renderEvents();
-    renderCalendar();
-    saveData();
-  }
-}
-
-function sendMessage() {
-  const input = document.getElementById("new-message");
-  const text = input.value.trim();
-  if (text) {
-    messages.push({ sender: currentUser, text });
-    input.value = "";
-    renderMessages();
-    saveData();
-  }
-}
-
-function renderMessages() {
-  const list = document.getElementById("message-list");
-  list.innerHTML = "";
-  messages.forEach(msg => {
-    const li = document.createElement("li");
-    li.innerHTML = `<span>${msg.sender}:</span><div>${msg.text}</div>`;
-    list.appendChild(li);
-  });
-}
-
-function sendManualReminder() {
-  alert("נשלחה תזכורת לבני המשפחה! (דמו בלבד)");
+function removeEvent(index) {
+  const actualIndex = events.findIndex(e => e.date === selectedDate && e.text === events[index].text);
+  events.splice(actualIndex, 1);
+  renderEvents();
+  renderCalendar();
+  saveData();
 }
 
 function logout() {
   currentUser = null;
   isParent = false;
+  selectedDate = null;
   document.getElementById("main-page").style.display = "none";
-  document.getElementById("login-page").style.display = "block";
+  location.reload();
 }
-
+// חושף את הפונקציות ל־HTML
 window.login = login;
-window.showSection = showSection;
+window.logout = logout;
 window.addTask = addTask;
-window.toggleTask = toggleTask;
+window.editTask = editTask;
 window.removeTask = removeTask;
+window.toggleTask = toggleTask;
+window.showSection = showSection;
 window.previousMonth = previousMonth;
 window.nextMonth = nextMonth;
 window.addEvent = addEvent;
 window.removeEvent = removeEvent;
-window.sendMessage = sendMessage;
-window.sendManualReminder = sendManualReminder;
-window.logout = logout;
