@@ -1,9 +1,17 @@
-// script.js — גרסה מלאה עם Firebase
+import { db, ref, set, get } from '/firebase-setup.js';
 
 let currentUser = null;
 let isParent = false;
-let tasks = [];
-let events = [];
+let tasks = [
+  { text: "רני ויהונתן לארגן יום הולדת לרתם", completed: false },
+  { text: "להנות מזה שהצלחתי להכין את זה", completed: true },
+  { text: "להחליט על מתנה מסבתא היא ביקשה", completed: false }
+];
+let events = [
+  "היום",
+  { date: "2025-03-31", text: "מבחן לאיתן בר אילן" },
+  { date: "2025-05-03", text: "בר מצווה לאיתן" }
+];
 let currentDate = new Date();
 let selectedDate = null;
 
@@ -35,18 +43,30 @@ function showSection(section) {
 }
 
 async function loadData() {
-  const snap = await getDoc(doc(db, "family", "main"));
-  if (snap.exists()) {
-    const data = snap.data();
-    tasks = data.tasks || [];
-    events = data.events || [];
+  try {
+    const familyRef = ref(db, 'family/main');
+    const snapshot = await get(familyRef);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      tasks = data.tasks || tasks;
+      events = data.events || events;
+    }
     renderTasks();
     if (document.getElementById("events").style.display === "block") renderCalendar();
+  } catch (error) {
+    console.error("שגיאה בטעינת נתונים:", error);
+    alert("אירעה שגיאה בטעינת הנתונים, נשתמש בנתוני ברירת מחדל.");
   }
 }
 
 async function saveData() {
-  await setDoc(doc(db, "family", "main"), { tasks, events });
+  try {
+    const familyRef = ref(db, 'family/main');
+    await set(familyRef, { tasks, events });
+  } catch (error) {
+    console.error("שגיאה בשמירת נתונים:", error);
+    alert("אירעה שגיאה בשמירת הנתונים.");
+  }
 }
 
 function addTask() {
@@ -122,13 +142,20 @@ function renderCalendar() {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const hasEvents = events.some(e => e.date === dateStr);
+    const hasEvents = events.some(e => (typeof e === "string" && e === "היום" && isToday(dateStr)) || (e.date === dateStr));
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
     if (hasEvents) dayElement.className = "has-events";
+    if (isToday(dateStr)) dayElement.classList.add("today");
     dayElement.onclick = () => selectDay(day, dateStr);
     calendar.appendChild(dayElement);
   }
+}
+
+function isToday(dateStr) {
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  return dateStr === todayStr;
 }
 
 function previousMonth() {
@@ -164,20 +191,41 @@ function addEvent() {
 function renderEvents() {
   const list = document.getElementById("event-list");
   list.innerHTML = "";
-  const dayEvents = events.filter(e => e.date === selectedDate);
+  const dayEvents = events.filter(e => e.date === selectedDate || (e === "היום" && isToday(selectedDate)));
   dayEvents.forEach((event, index) => {
     const li = document.createElement("li");
+    const eventText = typeof event === "string" ? event : event.text;
     li.innerHTML = `
-      <span>${event.text}</span>
-      ${isParent ? `<button onclick="removeEvent(${index})">מחק</button>` : ''}
+      <span>${eventText}</span>
+      ${isParent ? `<button onclick="editEvent(${index})">ערוך</button><button onclick="removeEvent(${index})">מחק</button>` : ''}
     `;
     list.appendChild(li);
   });
 }
 
+function editEvent(index) {
+  const dayEvents = events.filter(e => e.date === selectedDate || (e === "היום" && isToday(selectedDate)));
+  const event = dayEvents[index];
+  const newText = prompt("ערוך את האירוע:", typeof event === "string" ? event : event.text);
+  if (newText !== null && newText.trim()) {
+    if (typeof event === "string") {
+      const globalIndex = events.indexOf(event);
+      events[globalIndex] = newText.trim();
+    } else {
+      const globalIndex = events.findIndex(e => e.date === selectedDate && e.text === event.text);
+      events[globalIndex].text = newText.trim();
+    }
+    renderEvents();
+    renderCalendar();
+    saveData();
+  }
+}
+
 function removeEvent(index) {
-  const actualIndex = events.findIndex(e => e.date === selectedDate && e.text === events[index].text);
-  events.splice(actualIndex, 1);
+  const dayEvents = events.filter(e => e.date === selectedDate || (e === "היום" && isToday(selectedDate)));
+  const event = dayEvents[index];
+  const globalIndex = typeof event === "string" ? events.indexOf(event) : events.findIndex(e => e.date === selectedDate && e.text === event.text);
+  events.splice(globalIndex, 1);
   renderEvents();
   renderCalendar();
   saveData();
@@ -190,7 +238,8 @@ function logout() {
   document.getElementById("main-page").style.display = "none";
   location.reload();
 }
-// חושף את הפונקציות ל־HTML
+
+// חשיפת הפונקציות ל-HTML
 window.login = login;
 window.logout = logout;
 window.addTask = addTask;
@@ -201,4 +250,5 @@ window.showSection = showSection;
 window.previousMonth = previousMonth;
 window.nextMonth = nextMonth;
 window.addEvent = addEvent;
+window.editEvent = editEvent;
 window.removeEvent = removeEvent;
