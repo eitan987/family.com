@@ -1,4 +1,3 @@
-
 /* הגדרות כלליות */
 body {
     font-family: 'Rubik', sans-serif;
@@ -19,9 +18,66 @@ body {
     to { opacity: 1; }
 }
 
-/* עמוד כניסה */
-#login-page {
+/* עמוד כניסה ראשי למשפחה */
+#family-login-page {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.family-login-container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.family-login-container h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #0984e3;
+}
+
+.family-login-container h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #2d3436;
+}
+
+.family-login-container input,
+.family-login-container select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.family-login-container button {
+    padding: 12px 20px;
+    background: #0984e3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.family-login-container button:hover {
+    background: #0652dd;
+    transform: translateY(-2px);
+}
+
+/* עמוד כניסה למשתמשים */
+#login-page {
+    display: none;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -94,11 +150,6 @@ header {
 #user-type {
     font-weight: 500;
     color: #636e72;
-}
-
-#user-balance {
-    font-weight: 500;
-    color: #00b894;
 }
 
 #menu-btn {
@@ -178,8 +229,7 @@ nav ul li a:hover {
     flex-wrap: wrap;
 }
 
-.input-group input[type="text"],
-.input-group input[type="number"] {
+.input-group input[type="text"] {
     flex: 1;
     padding: 12px;
     border: 2px solid #dfe6e9;
@@ -188,18 +238,9 @@ nav ul li a:hover {
     transition: border-color 0.3s;
 }
 
-.input-group input[type="text"]:focus,
-.input-group input[type="number"]:focus {
+.input-group input[type="text"]:focus {
     border-color: #0984e3;
     outline: none;
-}
-
-.input-group select {
-    padding: 12px;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
-    font-size: 16px;
-    max-height: 100px;
 }
 
 .item-list {
@@ -232,7 +273,11 @@ nav ul li a:hover {
     margin-left: 10px;
     padding: 8px 15px;
     background: #e17055;
-    font-size: 14px;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
 .item-list li button:first-of-type {
@@ -311,6 +356,11 @@ nav ul li a:hover {
 
 .calendar .has-events {
     background: #00b894;
+    color: #fff;
+}
+
+.calendar .today {
+    background: #feca57;
     color: #fff;
 }
 
