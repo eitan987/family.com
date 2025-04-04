@@ -1,22 +1,40 @@
 import { db, ref, set, get } from '/firebase-setup.js';
 
+// משתנים גלובליים
 let currentUser = null;
 let isParent = false;
-let tasks = [
-  { text: "רני ויהונתן לארגן יום הולדת לרתם", completed: false },
-  { text: "להנות מזה שהצלחתי להכין את זה", completed: true },
-  { text: "להחליט על מתנה מסבתא היא ביקשה", completed: false }
-];
-let events = [
-  "היום",
-  { date: "2025-03-31", text: "מבחן לאיתן בר אילן" },
-  { date: "2025-05-03", text: "בר מצווה לאיתן" }
-];
+let currentFamilyId = null;
+let tasks = [];
+let events = [];
 let currentDate = new Date();
 let selectedDate = null;
 
+// טעינת EmailJS
+function loadEmailJS() {
+  const script = document.createElement('script');
+  script.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js";
+  script.onload = () => {
+    emailjs.init("xuPsiL8LsYTlmZuB6"); // החלף ב-Public Key שלך מ-EmailJS
+  };
+  document.head.appendChild(script);
+}
+
+// שליחת אימייל
+function sendEmail(toEmail, subject, message) {
+  emailjs.send("service_dks40ie", "template_e3osxgx", {
+    to_email: toEmail,
+    subject: subject,
+    message: message
+  }).then(
+    () => console.log("אימייל נשלח בהצלחה"),
+    (error) => console.error("שגיאה בשליחת אימייל:", error)
+  );
+}
+
 // המתנה לטעינת ה-DOM
 document.addEventListener("DOMContentLoaded", () => {
+  loadEmailJS();
+
   const menuBtn = document.getElementById("menu-btn");
   if (menuBtn) {
     menuBtn.addEventListener("click", () => {
@@ -26,20 +44,126 @@ document.addEventListener("DOMContentLoaded", () => {
         menu.classList.toggle("hidden");
       }
     });
-  } else {
-    console.error("כפתור התפריט לא נמצא");
   }
 
-  // וידוא שהכפתורים קיימים לפני הגדרת הפונקציות
-  const loginButtons = document.querySelectorAll(".user-list button");
-  if (loginButtons.length === 0) {
-    console.error("כפתורי הכניסה לא נמצאו");
-  }
+  // טעינת משפחות קיימות
+  loadFamilies();
 });
 
+// טעינת רשימת משפחות קיימות
+async function loadFamilies() {
+  const familySelect = document.getElementById("family-select");
+  if (!familySelect) return;
+
+  try {
+    const familiesRef = ref(db, 'families');
+    const snapshot = await get(familiesRef);
+    if (snapshot.exists()) {
+      const families = snapshot.val();
+      familySelect.innerHTML = '<option value="">בחר משפחה</option>';
+      Object.keys(families).forEach(familyId => {
+        const option = document.createElement("option");
+        option.value = familyId;
+        option.textContent = familyId;
+        familySelect.appendChild(option);
+      });
+    }
+  } catch (error) {
+    console.error("שגיאה בטעינת משפחות:", error);
+  }
+}
+
+// הרשמה למשפחה חדשה
+async function registerFamily() {
+  const familyName = document.getElementById("new-family-name").value.trim();
+  const email = document.getElementById("email-input").value.trim();
+
+  if (!familyName || !email) {
+    alert("נא למלא את כל השדות");
+    return;
+  }
+
+  try {
+    // שמירת בקשת הרשמה
+    const pendingRef = ref(db, `pendingRegistrations/${familyName}`);
+    await set(pendingRef, { email, action: "הרשמה", timestamp: new Date().toISOString() });
+
+    // שליחת אימייל לאיתן
+    sendEmail(
+      "eitan.yifrach@gmail.com",
+      "בקשת הרשמה חדשה",
+      `משפחה חדשה בשם "${familyName}" ביקשה להירשם.\nאימייל: ${email}\nפעולה: הרשמה`
+    );
+
+    alert("בקשת ההרשמה נשלחה. תקבל אימייל אישור בקרוב.");
+  } catch (error) {
+    console.error("שגיאה בהרשמה:", error);
+    alert("שגיאה בהרשמה, נסה שוב.");
+  }
+}
+
+// התחברות למשפחה קיימת
+async function connectToFamily() {
+  const familyId = document.getElementById("family-select").value;
+  const email = document.getElementById("email-input").value.trim();
+
+  if (!familyId || !email) {
+    alert("נא לבחור משפחה ולמלא אימייל");
+    return;
+  }
+
+  try {
+    // שמירת בקשת התחברות
+    const pendingRef = ref(db, `pendingRegistrations/${familyId}_${email}`);
+    await set(pendingRef, { email, action: "התחברות", timestamp: new Date().toISOString() });
+
+    // שליחת אימייל לאיתן
+    sendEmail(
+      "eitan.yifrach@gmail.com",
+      "בקשת התחברות למשפחה",
+      `משתמש עם אימייל "${email}" ביקש להתחבר למשפחה "${familyId}".\nפעולה: התחברות`
+    );
+
+    alert("בקשת ההתחברות נשלחה. תקבל אימייל אישור בקרוב.");
+  } catch (error) {
+    console.error("שגיאה בהתחברות:", error);
+    alert("שגיאה בהתחברות, נסה שוב.");
+  }
+}
+
+// אישור ידני (לדוגמה, פונקציה שתופעל על ידי איתן)
+async function approveRegistration(familyId, email, action) {
+  try {
+    if (action === "הרשמה") {
+      const familyRef = ref(db, `families/${familyId}/main`);
+      await set(familyRef, { tasks: [], events: [] });
+    }
+
+    // שליחת אימייל אישור למשתמש
+    sendEmail(
+      email,
+      "בקשתך אושרה",
+      `בקשתך ל-${action} למשפחה "${familyId}" אושרה בהצלחה!`
+    );
+
+    // מחיקת הבקשה ממתינות
+    const pendingRef = ref(db, `pendingRegistrations/${familyId}_${email}`);
+    await set(pendingRef, null);
+  } catch (error) {
+    console.error("שגיאה באישור בקשה:", error);
+  }
+}
+
+// בחירת משפחה והמשך לעמוד הכניסה הנוכחי
+function selectFamily(familyId) {
+  currentFamilyId = familyId;
+  document.getElementById("family-login-page").style.display = "none";
+  document.getElementById("login-page").style.display = "block";
+}
+
 function login(user, parent) {
-  if (!user || typeof parent !== "boolean") {
-    console.error("שגיאה בקלט של פונקציית login");
+  if (!currentFamilyId) {
+    alert("נא לבחור משפחה תחילה");
     return;
   }
 
@@ -65,8 +189,6 @@ function login(user, parent) {
     if (taskControls && eventControls) {
       taskControls.style.display = "block";
       eventControls.style.display = "block";
-    } else {
-      console.error("כלי הניהול להורים לא נמצאו");
     }
   }
 
@@ -75,12 +197,12 @@ function login(user, parent) {
 
 async function loadData() {
   try {
-    const familyRef = ref(db, 'family/main');
+    const familyRef = ref(db, `families/${currentFamilyId}/main`);
     const snapshot = await get(familyRef);
     if (snapshot.exists()) {
       const data = snapshot.val();
-      tasks = data.tasks || tasks;
-      events = data.events || events;
+      tasks = data.tasks || [];
+      events = data.events || [];
     }
     renderTasks();
     if (document.getElementById("events")?.style.display === "block") renderCalendar();
@@ -92,7 +214,7 @@ async function loadData() {
 
 async function saveData() {
   try {
-    const familyRef = ref(db, 'family/main');
+    const familyRef = ref(db, `families/${currentFamilyId}/main`);
     await set(familyRef, { tasks, events });
   } catch (error) {
     console.error("שגיאה בשמירת נתונים:", error);
@@ -114,10 +236,7 @@ function addTask() {
 
 function renderTasks() {
   const taskList = document.getElementById("task-list");
-  if (!taskList) {
-    console.error("רשימת המשימות לא נמצאה");
-    return;
-  }
+  if (!taskList) return;
   taskList.innerHTML = "";
   tasks.forEach((task, index) => {
     const li = document.createElement("li");
@@ -153,10 +272,7 @@ function toggleTask(index) {
 function renderCalendar() {
   const calendar = document.getElementById("calendar");
   const currentMonthDisplay = document.getElementById("current-month");
-  if (!calendar || !currentMonthDisplay) {
-    console.error("לוח השנה או התצוגה החודשית לא נמצאו");
-    return;
-  }
+  if (!calendar || !currentMonthDisplay) return;
   calendar.innerHTML = "";
 
   const monthNames = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
@@ -233,10 +349,7 @@ function addEvent() {
 
 function renderEvents() {
   const list = document.getElementById("event-list");
-  if (!list) {
-    console.error("רשימת האירועים לא נמצאה");
-    return;
-  }
+  if (!list) return;
   list.innerHTML = "";
   const dayEvents = events.filter(e => e.date === selectedDate || (e === "היום" && isToday(selectedDate)));
   dayEvents.forEach((event, index) => {
@@ -282,8 +395,10 @@ function logout() {
   currentUser = null;
   isParent = false;
   selectedDate = null;
+  currentFamilyId = null;
   document.getElementById("main-page").style.display = "none";
-  location.reload();
+  document.getElementById("login-page").style.display = "none";
+  document.getElementById("family-login-page").style.display = "block";
 }
 
 function showSection(section) {
@@ -297,6 +412,9 @@ function showSection(section) {
 }
 
 // חשיפת הפונקציות ל-HTML
+window.registerFamily = registerFamily;
+window.connectToFamily = connectToFamily;
+window.selectFamily = selectFamily;
 window.login = login;
 window.logout = logout;
 window.addTask = addTask;
