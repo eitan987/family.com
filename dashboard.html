@@ -1,16 +1,221 @@
+<!-- עדכונים לקובץ ה-HTML: -->
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+    <!-- שאר התגיות הקיימות בhead -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family.com - דשבורד משפחתי</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- הוספת סגנון ייעודי לתפריט המתכווץ -->
+    <style>
+        /* סגנונות לסרגל צדדי מתכווץ */
+        .sidebar {
+            transition: width 0.3s ease;
+            width: 60px;
+            overflow: hidden;
+            position: fixed;
+            height: 100%;
+            z-index: 100;
+        }
+        
+        .sidebar.expanded {
+            width: 250px;
+        }
+        
+        .sidebar-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            z-index: 101;
+        }
+        
+        .sidebar-toggle i {
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.expanded .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        /* התאמת תוכן הסרגל הצדדי */
+        .logo h2 {
+            white-space: nowrap;
+            transition: opacity 0.2s ease;
+            opacity: 0;
+        }
+        
+        .sidebar.expanded .logo h2 {
+            opacity: 1;
+        }
+        
+        .sidebar-user {
+            transition: padding 0.3s ease;
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info {
+            white-space: nowrap;
+            transition: opacity 0.2s ease;
+            opacity: 0;
+            margin-right: 10px;
+        }
+        
+        .sidebar.expanded .user-info {
+            opacity: 1;
+        }
+        
+        .main-nav ul li button {
+            transition: padding 0.3s ease;
+            white-space: nowrap;
+            padding: 12px 15px;
+            width: 100%;
+            text-align: right;
+            display: flex;
+            align-items: center;
+        }
+        
+        .main-nav ul li button i {
+            margin-left: 10px;
+            font-size: 18px;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .main-nav ul li button span {
+            transition: opacity 0.2s ease;
+            opacity: 0;
+        }
+        
+        .sidebar.expanded .main-nav ul li button span {
+            opacity: 1;
+        }
+        
+        .main-content {
+            transition: margin-right 0.3s ease;
+            margin-right: 60px;
+        }
+        
+        .sidebar.expanded + .main-content {
+            margin-right: 250px;
+        }
+        
+        /* התאמות לרכיב הלוגו */
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0;
+            height: 60px;
+        }
+        
+        .sidebar:not(.expanded) .logo {
+            padding: 15px 0;
+        }
+        
+        /* התאמות לכפתור ההתנתקות */
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 15px;
+            transition: padding 0.3s ease;
+        }
+        
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        
+        .sidebar-btn span {
+            transition: opacity 0.2s ease;
+            opacity: 0;
+            margin-right: 8px;
+        }
+        
+        .sidebar.expanded .sidebar-btn span {
+            opacity: 1;
+        }
+        
+        /* כפתור מיני לפתיחת הסרגל במצב מובייל */
+        .sidebar-mini-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(100%);
+                width: 250px;
+            }
+            
+            .sidebar.expanded {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-right: 0;
+            }
+            
+            .sidebar.expanded + .main-content {
+                margin-right: 0;
+            }
+            
+            .sidebar-mini-toggle {
+                display: flex;
+            }
+            
+            /* תמיד להציג את הטקסט במצב מובייל */
+            .logo h2,
+            .user-info,
+            .main-nav ul li button span,
+            .sidebar-btn span {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body class="dashboard-page">
     <div class="app-container">
+        <!-- כפתור מיני לפתיחת הסרגל במצב מובייל -->
+        <div class="sidebar-mini-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <!-- סרגל צדדי מתכווץ -->
         <aside class="sidebar">
+            <!-- כפתור הרחבה/צמצום -->
+            <div class="sidebar-toggle">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            
             <div class="logo">
                 <h2>Family<span>.com</span></h2>
             </div>
@@ -71,485 +276,65 @@
             </div>
         </aside>
 
+        <!-- המשך התוכן הקיים... -->
         <main class="main-content">
-            <header>
-                <div class="page-title">
-                    <h1 id="current-page-title">משימות</h1>
-                </div>
-                <div class="header-actions">
-                    <button id="notifications-btn" class="header-btn">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <div class="theme-toggle">
-                        <button id="theme-toggle-btn">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <div class="pages-container">
-                <!-- משימות -->
-                <section id="tasks-page" class="page active">
-                    <div class="page-header">
-                        <div class="page-actions">
-                            <button id="add-task-btn" class="btn primary-btn">
-                                <i class="fas fa-plus"></i>
-                                <span>משימה חדשה</span>
-                            </button>
-                            <select id="task-filter" class="select-filter">
-                                <option value="all">כל המשימות</option>
-                                <option value="mine">המשימות שלי</option>
-                                <option value="completed">משימות שהושלמו</option>
-                                <option value="incomplete">משימות פתוחות</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="content-container">
-                        <div class="stats-row">
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-title">הושלמו</span>
-                                    <span id="completed-tasks-count" class="stat-value">0</span>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-hourglass-half"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-title">בתהליך</span>
-                                    <span id="pending-tasks-count" class="stat-value">0</span>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-title">דחופות</span>
-                                    <span id="urgent-tasks-count" class="stat-value">0</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tasks-list" id="tasks-container">
-                            <!-- כאן יוצגו המשימות מהמסד נתונים -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- לוח שנה -->
-                <section id="calendar-page" class="page">
-                    <div class="page-header">
-                        <div class="page-actions">
-                            <button id="add-event-btn" class="btn primary-btn">
-                                <i class="fas fa-plus"></i>
-                                <span>אירוע חדש</span>
-                            </button>
-                            <div class="calendar-nav">
-                                <button id="prev-month" class="btn outline-btn">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                                <span id="current-month" class="current-month-display"></span>
-                                <button id="next-month" class="btn outline-btn">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content-container">
-                        <div class="calendar-container">
-                            <div class="calendar-header">
-                                <div>ראשון</div>
-                                <div>שני</div>
-                                <div>שלישי</div>
-                                <div>רביעי</div>
-                                <div>חמישי</div>
-                                <div>שישי</div>
-                                <div>שבת</div>
-                            </div>
-                            <div class="calendar-days" id="calendar-days">
-                                <!-- ימי הלוח יוצגו כאן -->
-                            </div>
-                        </div>
-                        <div class="upcoming-events">
-                            <h3>אירועים קרובים</h3>
-                            <div id="upcoming-events-list">
-                                <!-- אירועים קרובים יוצגו כאן -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- הודעות -->
-                <section id="messages-page" class="page">
-                    <div class="page-header">
-                        <div class="page-actions">
-                            <select id="messages-filter" class="select-filter">
-                                <option value="all">כל ההודעות</option>
-                                <option value="tv-requests">בקשות טלוויזיה</option>
-                                <option value="notifications">התראות</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="content-container messages-container">
-                        <div class="messages-list" id="messages-list">
-                            <!-- כאן יוצגו ההודעות מהמסד נתונים -->
-                        </div>
-                        <div class="message-input">
-                            <textarea id="new-message" placeholder="הקלד הודעה..."></textarea>
-                            <div class="message-actions">
-                                <button id="tv-request-btn" class="btn outline-btn child-only">
-                                    <i class="fas fa-tv"></i>
-                                    <span>בקשת טלוויזיה</span>
-                                </button>
-                                <button id="send-message" class="btn primary-btn">
-                                    <i class="fas fa-paper-plane"></i>
-                                    <span>שלח</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- תקציב -->
-                <section id="budget-page" class="page">
-                    <div class="page-header">
-                        <div class="page-actions parent-only">
-                            <button id="add-budget-btn" class="btn primary-btn">
-                                <i class="fas fa-plus"></i>
-                                <span>הוסף כסף</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="content-container">
-                        <div class="budget-container">
-                            <div class="balances-section">
-                                <h3>יתרות</h3>
-                                <div id="balances-list" class="balances-grid">
-                                    <!-- כאן יוצגו היתרות של בני המשפחה -->
-                                </div>
-                            </div>
-
-                            <div class="transactions-section parent-only">
-                                <h3>העברות כספים</h3>
-                                <div class="form-group">
-                                    <label for="transfer-to">העבר ל:</label>
-                                    <select id="transfer-to" class="form-select"></select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="transfer-amount">סכום</label>
-                                    <input type="number" id="transfer-amount" min="1" value="10" class="form-input">
-                                </div>
-                                <div class="form-group">
-                                    <label for="transfer-note">הערה</label>
-                                    <input type="text" id="transfer-note" placeholder="העברה עבור..." class="form-input">
-                                </div>
-                                <button id="transfer-btn" class="btn primary-btn">בצע העברה</button>
-                            </div>
-
-                            <div class="transactions-history">
-                                <h3>היסטוריית פעולות</h3>
-                                <div id="transactions-list" class="transactions-list">
-                                    <!-- כאן תוצג היסטוריית העברות -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- פגישות זום -->
-                <section id="meetings-page" class="page">
-                    <div class="page-header">
-                        <div class="page-actions">
-                            <button id="create-meeting-btn" class="btn primary-btn">
-                                <i class="fas fa-plus"></i>
-                                <span>צור פגישה חדשה</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="content-container">
-                        <div class="meetings-grid">
-                            <div class="upcoming-meetings">
-                                <h3>פגישות קרובות</h3>
-                                <div id="upcoming-meetings-list" class="meetings-list">
-                                    <!-- פגישות קרובות יוצגו כאן -->
-                                </div>
-                            </div>
-
-                            <div class="past-meetings">
-                                <h3>פגישות קודמות</h3>
-                                <div id="past-meetings-list" class="meetings-list">
-                                    <!-- פגישות קודמות יוצגו כאן -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ניהול משפחה מורחבת (להורים בלבד) -->
-                <section id="family-management-page" class="page parent-only">
-                    <div class="page-header">
-                        <div class="page-actions">
-                            <button id="link-family-btn" class="btn primary-btn">
-                                <i class="fas fa-link"></i>
-                                <span>קשר משפחה</span>
-                            </button>
-                            <button id="manage-users-btn" class="btn outline-btn">
-                                <i class="fas fa-user-cog"></i>
-                                <span>נהל משתמשים</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="content-container">
-                        <div class="family-tree-container">
-                            <h3>עץ משפחה</h3>
-                            <div id="family-tree" class="family-tree">
-                                <!-- כאן יוצג עץ המשפחה המורחבת -->
-                            </div>
-                        </div>
-
-                        <div class="connected-families">
-                            <h3>משפחות מקושרות</h3>
-                            <div id="connected-families-list">
-                                <!-- כאן יוצגו המשפחות המקושרות -->
-                            </div>
-                        </div>
-
-                        <div class="family-settings">
-                            <h3>הגדרות משפחה</h3>
-                            <div class="settings-form">
-                                <div class="form-group">
-                                    <label for="family-name">שם המשפחה</label>
-                                    <input type="text" id="family-name" class="form-input">
-                                </div>
-                                <div class="form-group">
-                                    <label for="family-type">סוג המשפחה</label>
-                                    <select id="family-type" class="form-select">
-                                        <option value="primary">ראשית</option>
-                                        <option value="extended">משפחה מורחבת</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="parent-family">משפחת הורים</label>
-                                    <select id="parent-family" class="form-select"></select>
-                                </div>
-                                <button id="save-family-settings" class="btn primary-btn">שמור הגדרות</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
+            <!-- תוכן הדף הקיים... -->
         </main>
     </div>
 
-    <!-- מודאלים -->
-    <!-- מודאל משימה -->
-    <div id="task-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>הוספת משימה חדשה</h3>
-                <span class="close-modal" id="close-task-modal">×</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="task-text">תיאור המשימה</label>
-                    <input type="text" id="task-text" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="task-assigned">משוייך ל:</label>
-                    <select id="task-assigned" class="form-select" required></select>
-                </div>
-                <div class="form-group">
-                    <label for="task-priority">עדיפות:</label>
-                    <select id="task-priority" class="form-select">
-                        <option value="normal">רגילה</option>
-                        <option value="urgent">דחוף</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="task-due-date">תאריך יעד</label>
-                    <input type="date" id="task-due-date" class="form-input">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="save-task-btn" class="btn primary-btn">שמור</button>
-            </div>
-        </div>
-    </div>
+    <!-- המשך התוכן הקיים... -->
 
-    <!-- מודאל אירוע -->
-    <div id="event-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>הוספת אירוע חדש</h3>
-                <span class="close-modal" id="close-event-modal">×</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="event-title">כותרת</label>
-                    <input type="text" id="event-title" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="event-date">תאריך</label>
-                    <input type="date" id="event-date" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="event-time">שעה</label>
-                    <input type="time" id="event-time" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label for="event-description">תיאור (אופציונלי)</label>
-                    <textarea id="event-description" class="form-textarea"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>הודע ל:</label>
-                    <div id="event-notify-users" class="checkbox-group">
-                        <!-- כאן יוצגו תיבות סימון של בני המשפחה -->
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="save-event-btn" class="btn primary-btn">שמור</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- מודאל בקשת טלוויזיה -->
-    <div id="tv-request-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>בקשת זמן טלוויזיה</h3>
-                <span class="close-modal" id="close-tv-modal">×</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="tv-time">כמה זמן?</label>
-                    <select id="tv-time" class="form-select">
-                        <option value="15">15 דקות</option>
-                        <option value="30">30 דקות</option>
-                        <option value="60">שעה</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="tv-reason">סיבת הבקשה (אופציונלי)</label>
-                    <input type="text" id="tv-reason" class="form-input" placeholder="למה אתה רוצה לצפות?">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="send-tv-request-btn" class="btn primary-btn">שלח בקשה</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- מודאל פגישת זום -->
-    <div id="meeting-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>יצירת פגישת זום</h3>
-                <span class="close-modal" id="close-meeting-modal">×</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="meeting-title">נושא הפגישה</label>
-                    <input type="text" id="meeting-title" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="meeting-date">תאריך</label>
-                    <input type="date" id="meeting-date" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="meeting-time">שעה</label>
-                    <input type="time" id="meeting-time" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="meeting-duration">משך (דקות)</label>
-                    <input type="number" id="meeting-duration" class="form-input" value="30" min="15" step="15">
-                </div>
-                <div class="form-group">
-                    <label>משתתפים:</label>
-                    <div id="meeting-participants" class="checkbox-group">
-                        <!-- כאן יוצגו תיבות סימון של בני המשפחה -->
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>כלול משפחות מורחבות?</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="include-extended-families">
-                        <label for="include-extended-families" class="toggle-label"></label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="create-zoom-meeting" class="btn primary-btn">צור פגישה</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- מודאל קישור משפחה -->
-    <div id="link-family-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>קישור למשפחה אחרת</h3>
-                <span class="close-modal" id="close-link-family-modal">×</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="family-code">קוד משפחה</label>
-                    <input type="text" id="family-code" class="form-input" placeholder="הזן קוד משפחה">
-                </div>
-                <div class="form-group">
-                    <label for="relationship-type">סוג קשר</label>
-                    <select id="relationship-type" class="form-select">
-                        <option value="parent">הורה</option>
-                        <option value="child">ילד</option>
-                        <option value="sibling">אח/אחות</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>הרשאות:</label>
-                    <div class="permissions-group">
-                        <div class="permission-item">
-                            <input type="checkbox" id="perm-calendar" checked>
-                            <label for="perm-calendar">לוח שנה</label>
-                        </div>
-                        <div class="permission-item">
-                            <input type="checkbox" id="perm-messages">
-                            <label for="perm-messages">הודעות</label>
-                        </div>
-                        <div class="permission-item">
-                            <input type="checkbox" id="perm-meetings" checked>
-                            <label for="perm-meetings">פגישות</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="link-family-save-btn" class="btn primary-btn">קשר משפחות</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="notification" class="notification"></div>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- הוספת סקריפט לתפריט המתכווץ -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCzSULY0lOBQbKKvYq9vQeuELNeIQVjaao",
-  authDomain: "family-f4d22.firebaseapp.com",
-  projectId: "family-f4d22",
-  storageBucket: "family-f4d22.firebasestorage.app",
-  messagingSenderId: "676033750020",
-  appId: "1:676033750020:web:1546494d9f159d951c8151"
-        };
-        firebase.initializeApp(firebaseConfig);
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebarMiniToggle = document.querySelector('.sidebar-mini-toggle');
+            const appContainer = document.querySelector('.app-container');
+            
+            // פונקציה להפעלת מצב מורחב
+            function expandSidebar() {
+                sidebar.classList.add('expanded');
+            }
+            
+            // פונקציה לסגירת התפריט
+            function collapseSidebar() {
+                sidebar.classList.remove('expanded');
+            }
+            
+            // הפעלת מצב מורחב בעת מעבר עכבר על הסרגל
+            sidebar.addEventListener('mouseenter', expandSidebar);
+            
+            // סגירה בעת יציאת העכבר מהסרגל
+            sidebar.addEventListener('mouseleave', collapseSidebar);
+            
+            // הפעלה/ביטול בלחיצה על כפתור ההרחבה
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation(); // מניעת בועת האירוע
+                sidebar.classList.toggle('expanded');
+            });
+            
+            // כפתור מיני במצב מובייל
+            if (sidebarMiniToggle) {
+                sidebarMiniToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('expanded');
+                });
+            }
+            
+            // סגירת התפריט בלחיצה על חלק אחר במסך במצב מובייל
+            document.addEventListener('click', function(e) {
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile && !sidebar.contains(e.target) && !sidebarMiniToggle.contains(e.target)) {
+                    collapseSidebar();
+                }
+            });
+            
+            // אירוע לשינוי גודל המסך
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    // במסך רחב, אפשר את התגובה למעבר עכבר
+                    collapseSidebar();
+                }
+            });
+        });
     </script>
-    <script src="dashboard.js"></script>
-</body>
-</html>
