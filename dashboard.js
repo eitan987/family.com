@@ -1159,3 +1159,57 @@ function formatDateTime(timestamp) {
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     return date.toLocaleString('he-IL');
 }
+// קוד לסרגל נפתח
+function initCollapsibleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    
+    // הוסף כפתור מיני למובייל
+    const sidebarMiniToggle = document.createElement('div');
+    sidebarMiniToggle.className = 'sidebar-mini-toggle';
+    sidebarMiniToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    document.body.appendChild(sidebarMiniToggle);
+    
+    // פונקציה להפעלת מצב מורחב
+    function expandSidebar() {
+        sidebar.classList.add('expanded');
+    }
+    
+    // פונקציה לסגירת התפריט
+    function collapseSidebar() {
+        sidebar.classList.remove('expanded');
+    }
+    
+    // הפעלת מצב מורחב בעת מעבר עכבר על הסרגל
+    sidebar.addEventListener('mouseenter', expandSidebar);
+    
+    // סגירה בעת יציאת העכבר מהסרגל
+    sidebar.addEventListener('mouseleave', collapseSidebar);
+    
+    // כפתור מיני במצב מובייל
+    sidebarMiniToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('expanded');
+    });
+    
+    // סגירת התפריט בלחיצה על חלק אחר במסך במצב מובייל
+    document.addEventListener('click', function(e) {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile && !sidebar.contains(e.target) && !sidebarMiniToggle.contains(e.target)) {
+            collapseSidebar();
+        }
+    });
+    
+    // אירוע לשינוי גודל המסך
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            // במסך רחב, אפשר את התגובה למעבר עכבר
+            collapseSidebar();
+        }
+    });
+}
+
+// הפעל את פונקציית האתחול של הסרגל
+document.addEventListener('DOMContentLoaded', function() {
+    // אם הקוד כבר נמצא בתוך DOMContentLoaded, אין צורך בשורה הזו
+    initCollapsibleSidebar();
+});
