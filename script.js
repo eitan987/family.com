@@ -1,4 +1,14 @@
-// אתחול Firebase - יש לוודא שה-SDK נטען ב-HTML
+// בדוק שה-Firebase אותחל לפני השימוש
+if (!firebase.apps.length) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    console.log("Firebase אותחל בהצלחה!");
+  } catch (e) {
+    console.error("שגיאה באתחול Firebase:", e);
+  }
+}
+
+// אתחול Firestore
 const db = firebase.firestore();
 
 // משתנה גלובלי לסימון אם ביצענו הפניה
