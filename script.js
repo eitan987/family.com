@@ -1,8 +1,5 @@
-// אתחול Firebase - יש לוודא שה-SDK נטען ב-HTML
-// השתמש ב-window.db אם כבר קיים, אחרת צור חדש
-const db = window.db || firebase.firestore();
-// עדכן המשתנה הגלובלי
-window.db = db;
+// אתחול Firestore
+const db = firebase.firestore();
 
 // משתנה גלובלי לסימון אם ביצענו הפניה
 let hasRedirected = false;
@@ -14,7 +11,12 @@ function navigateToDashboard() {
             console.log("כבר בדף הדשבורד, לא מבצע ניווט נוסף");
             return;
         }
+        if (hasRedirected) {
+            console.log("הפניה כבר בוצעה, לא מבצע שוב");
+            return;
+        }
         
+        hasRedirected = true;
         const currentUrl = window.location.href;
         const dashboardUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1) + 'dashboard.html';
         console.log("מנווט אל:", dashboardUrl);
@@ -22,6 +24,7 @@ function navigateToDashboard() {
     } catch (error) {
         console.error("שגיאה בניווט לדשבורד:", error);
         alert("שגיאה בניווט לדף הדשבורד. נסה להזין את הכתובת בעצמך: dashboard.html");
+        hasRedirected = false;
     }
 }
 
@@ -59,7 +62,7 @@ function addMember(role) {
 // מונה לשמירת מספר בני המשפחה שנוספו
 let memberCount = 0;
 
-// החלפת טאבים בין התחברות להרשמה והתחלת תהליך טעינת הדף
+// אתחול אירועים עם טעינת הדף
 document.addEventListener('DOMContentLoaded', () => {
     // מאזיני אירועים לכפתורי הוספת בני משפחה
     const addParentBtn = document.getElementById('add-parent-btn');
@@ -68,15 +71,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addParentBtn) {
         addParentBtn.addEventListener('click', () => addMember('הורה'));
     } else {
-        console.log("כפתור 'הוסף הורה' לא נמצא - ייתכן שאנחנו בדף התחברות");
+        console.log("כפתור 'הוסף הורה' לא נמצא");
     }
 
     if (addChildBtn) {
         addChildBtn.addEventListener('click', () => addMember('ילד'));
     } else {
-        console.log("כפתור 'הוסף ילד' לא נמצא - ייתכן שאנחנו בדף התחברות");
+        console.log("כפתור 'הוסף ילד' לא נמצא");
     }
 
+    // החלפת טאבים
     document.querySelectorAll('.tab-btn').forEach(button => {
         button.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -103,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (!familyNameInput || !passwordInput || !errorDiv) {
                 console.error("שדות הטופס חסרים");
+                errorDiv.textContent = 'שגיאה: שדות הטופס חסרים';
                 return;
             }
             
@@ -116,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
+                // בדיקת קיום שם משפחה
                 const familySnapshot = await db.collection('families').where('familyName', '==', familyName).get();
                 if (!familySnapshot.empty) {
                     errorDiv.textContent = 'שם המשפחה כבר קיים במערכת';
@@ -123,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
+                // איסוף בני משפחה
                 const members = {};
                 const memberInputs = document.querySelectorAll('.member-input');
                 
@@ -142,13 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
+                // שמירה ב-Firestore
                 const familyRef = await db.collection('families').add({
                     familyName: familyName,
-                    password: password, // הערה: ביישום אמיתי יש להצפין את הסיסמה
+                    password: password, // הערה: יש להצפין את הסיסמה ביישום אמיתי
                     users: members,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
+                // שמירת נתונים ב-localStorage
                 const firstUser = Object.keys(members)[0];
                 localStorage.setItem('familyId', familyRef.id);
                 localStorage.setItem('username', firstUser);
@@ -162,8 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorDiv.classList.add('error-message');
             }
         });
-    } else {
-        console.log("כפתור ההרשמה לא נמצא - ייתכן שאנחנו בדף אחר");
     }
 
     // התחברות
@@ -177,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (!familyNameInput || !usernameSelect || !passwordInput || !errorDiv) {
                 console.error("שדות טופס ההתחברות חסרים");
+                errorDiv.textContent = 'שגיאה: שדות הטופס חסרים';
                 return;
             }
             
@@ -224,8 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorDiv.classList.add('error-message');
             }
         });
-    } else {
-        console.log("כפתור ההתחברות לא נמצא - ייתכן שאנחנו בדף אחר");
     }
 
     // טעינת שמות משתמשים בעת שינוי שם המשפחה
@@ -236,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const usernameSelect = document.getElementById('login-username');
             if (!usernameSelect) return;
 
-            usernameSelect.innerHTML = '<option value="">בחר משתמש</option>';
+            usernameSelect.innerHTML = '<option value="">-- בחר משתמש --</option>';
 
             if (!familyName) return;
 
