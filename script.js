@@ -1,13 +1,18 @@
-// המתנה לטעינת Firebase לפני הרצת הקוד
-function initializeApp() {
+// המתנה לטעינת כל הסקריפטים לפני הרצת הקוד
+window.onload = function() {
+    // בדיקה ש-Firebase זמין
     if (typeof firebase === 'undefined' || !firebase.firestore) {
-        console.error("Firebase לא נטען כראוי. ממתין לטעינה...");
-        setTimeout(initializeApp, 500); // נסה שוב לאחר 500ms
+        console.error("Firebase לא נטען כראוי.");
+        alert("שגיאה: Firebase לא זמין. אנא בדוק את חיבור האינטרנט או את הגדרות ה-Firebase.");
         return;
     }
 
-    // אתחול Firestore
-    const db = firebase.firestore();
+    // משתמש במשתנה db שכבר מוגדר ב-HTML
+    if (!window.db) {
+        console.error("משתנה db לא מוגדר ב-HTML.");
+        alert("שגיאה: לא ניתן להתחבר למסד הנתונים. אנא בדוק את הקוד ב-HTML.");
+        return;
+    }
 
     // משתנה גלובלי לסימון אם ביצענו הפניה
     let hasRedirected = false;
@@ -130,7 +135,7 @@ function initializeApp() {
 
                 try {
                     // בדיקת קיום שם משפחה
-                    const familySnapshot = await db.collection('families').where('familyName', '==', familyName).get();
+                    const familySnapshot = await window.db.collection('families').where('familyName', '==', familyName).get();
                     if (!familySnapshot.empty) {
                         errorDiv.textContent = 'שם המשפחה כבר קיים במערכת';
                         errorDiv.classList.add('error-message');
@@ -158,7 +163,7 @@ function initializeApp() {
                     }
 
                     // שמירה ב-Firestore
-                    const familyRef = await db.collection('families').add({
+                    const familyRef = await window.db.collection('families').add({
                         familyName: familyName,
                         password: password, // הערה: יש להצפין את הסיסמה ביישום אמיתי
                         users: members,
@@ -179,6 +184,8 @@ function initializeApp() {
                     errorDiv.classList.add('error-message');
                 }
             });
+        } else {
+            console.log("כפתור ההרשמה לא נמצא");
         }
 
         // התחברות
@@ -207,7 +214,7 @@ function initializeApp() {
                 }
 
                 try {
-                    const familySnapshot = await db.collection('families')
+                    const familySnapshot = await window.db.collection('families')
                         .where('familyName', '==', familyName)
                         .where('password', '==', password)
                         .get();
@@ -240,6 +247,8 @@ function initializeApp() {
                     errorDiv.classList.add('error-message');
                 }
             });
+        } else {
+            console.log("כפתור ההתחברות לא נמצא");
         }
 
         // טעינת שמות משתמשים בעת שינוי שם המשפחה
@@ -255,7 +264,7 @@ function initializeApp() {
                 if (!familyName) return;
 
                 try {
-                    const familySnapshot = await db.collection('families')
+                    const familySnapshot = await window.db.collection('families')
                         .where('familyName', '==', familyName)
                         .get();
 
@@ -288,7 +297,7 @@ function initializeApp() {
             navigateToDashboard();
         }
     });
-}
+};
 
 // הפעלת הקוד לאחר טעינת הדף
 document.addEventListener('DOMContentLoaded', initializeApp);
