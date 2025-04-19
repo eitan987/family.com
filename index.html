@@ -90,31 +90,32 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+   <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-    <!-- Firebase Configuration -->
-    <script>
-        const firebaseConfig = {
-           const firebaseConfig = {
-    apiKey: "AIzaSyCzSULY0lOBQbKKvYq9vQeuELNeIQVjaao",
-    authDomain: "family-f4d22.firebaseapp.com",
-    projectId: "family-f4d22",
-    storageBucket: "family-f4d22.appspot.com",
-    messagingSenderId: "676033750020",
-    appId: "1:676033750020:web:1546494d9f159d951c8151"
-};
-        
-        // אתחול Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-            console.log("Firebase אותחל בהצלחה!");
-        } catch (e) {
-            console.error("שגיאה באתחול Firebase:", e);
-        }
-    </script>
+<!-- אתחול Firebase -->
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCzSULY0lOBQbKKvYq9vQeuELNeIQVjaao",
+        authDomain: "family-f4d22.firebaseapp.com",
+        projectId: "family-f4d22",
+        storageBucket: "family-f4d22.appspot.com",
+        messagingSenderId: "676033750020",
+        appId: "1:676033750020:web:1546494d9f159d951c8151"
+    };
+    
+    // אתחול Firebase
+    firebase.initializeApp(firebaseConfig);
+    
+    // יצירת הפניות לשירותים
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+</script>
+
+<!-- קוד ספציפי לאפליקציה -->
+<script src="script.js"></script>
 
     <!-- Login JavaScript -->
     <script src="script.js"></script>
