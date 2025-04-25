@@ -5,9 +5,9 @@ const nextConfig = {
   env: {
     BASE_URL: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
   },
-  // התצורה תלויה בסביבה
-  basePath: process.env.VERCEL_ENV === 'production' ? '' : '',
-  assetPrefix: process.env.VERCEL_ENV === 'production' ? '' : '',
+  // הגדרות עבור סביבת פיתוח וייצור
+  basePath: '',
+  assetPrefix: '',
   // מאפשר גישה מכל מקור (CORS)
   async headers() {
     return [
@@ -45,6 +45,10 @@ const nextConfig = {
   compiler: {
     // שימוש ב-emotion עם react
     emotion: true,
+  },
+  // מבטל הגבלות להמרת סמלים כדי לטפל בקבצי פונטים
+  experimental: {
+    forceSwcTransforms: true
   }
 };
 module.exports = nextConfig;
