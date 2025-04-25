@@ -1,0 +1,10 @@
+1:HL["/_next/static/css/e4cecc300e206a06.css","style",{"crossOrigin":""}]
+0:["v1yU1E79YZhe83ypw2ufl",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],"$L2",[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/e4cecc300e206a06.css","precedence":"next","crossOrigin":"anonymous"}]],"$L3"]]]]
+4:I[6954,[],""]
+5:I[7264,[],""]
+6:I[3619,["901","static/chunks/901-b35293f67e81d6a4.js","160","static/chunks/app/not-found-e90fa90de2597fe7.js"],""]
+8:I[7650,["901","static/chunks/901-b35293f67e81d6a4.js","450","static/chunks/450-3124775e8624dde3.js","931","static/chunks/app/page-0c329d6ac51398fc.js"],""]
+9:I[5480,["901","static/chunks/901-b35293f67e81d6a4.js","450","static/chunks/450-3124775e8624dde3.js","931","static/chunks/app/page-0c329d6ac51398fc.js"],""]
+2:[null,["$","html",null,{"lang":"he","dir":"rtl","children":["$","body",null,{"children":["$","main",null,{"className":"min-h-screen bg-gray-50","children":["$","$L4",null,{"parallelRouterKey":"children","segmentPath":["children"],"loading":"$undefined","loadingStyles":"$undefined","loadingScripts":"$undefined","hasLoading":false,"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":["$","$L6",null,{}],"notFoundStyles":[],"childProp":{"current":["$L7",["$","div",null,{"className":"min-h-screen flex items-center justify-center bg-gray-100","children":["$","div",null,{"className":"max-w-md w-full bg-white rounded-lg shadow-lg overflow-hidden","children":[["$","div",null,{"className":"bg-indigo-600 py-4","children":["$","h2",null,{"className":"text-center text-2xl font-bold text-white","children":"ברוכים הבאים לאפליקציית המשפחה"}]}],["$","div",null,{"className":"px-6 py-8","children":[["$","$L8",null,{}],["$","$L9",null,{}]]}]]}]}],null],"segment":"__PAGE__"},"styles":null}]}]}]}],null]
+3:[["$","meta","0",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","1",{"charSet":"utf-8"}],["$","title","2",{"children":"אפליקציית משפחה"}],["$","meta","3",{"name":"description","content":"אפליקציה לניהול ענייני המשפחה"}]]
+7:null

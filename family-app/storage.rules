@@ -1,0 +1,40 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // חוקים למסמכים משפחתיים
+    match /families/{familyId}/{allFiles=**} {
+      // משתמש יכול לקרוא קבצים של משפחות שהוא חבר בהן
+      allow read: if request.auth != null &&
+        exists(/databases/(default)/documents/families/$(familyId)/members/$(request.auth.uid));
+      
+      // משתמש יכול להעלות קבצים למשפחות שהוא חבר בהן
+      allow write: if request.auth != null &&
+        exists(/databases/(default)/documents/families/$(familyId)/members/$(request.auth.uid)) &&
+        request.resource.size < 10 * 1024 * 1024 && // מגבלת גודל קובץ - 10MB
+        request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      
+      // רק המשתמש שהעלה או מנהל יכול למחוק
+      allow delete: if request.auth != null &&
+        (resource.metadata.uploadedBy == request.auth.uid ||
+         exists(/databases/(default)/documents/families/$(familyId)/admins/$(request.auth.uid)));
+    }
+    
+    // חוקים לתמונות פרופיל משתמשים
+    match /users/{userId}/profile-image {
+      // כל אחד יכול לקרוא תמונות פרופיל
+      allow read: if request.auth != null;
+      
+      // רק המשתמש עצמו יכול לעדכן את תמונת הפרופיל שלו
+      allow write: if request.auth != null && 
+                   request.auth.uid == userId &&
+                   request.resource.size < 5 * 1024 * 1024 && // מגבלת גודל קובץ - 5MB
+                   request.resource.contentType.matches('image/.*');
+    }
+    
+    // חוקים כלליים
+    match /{allPaths=**} {
+      // אין גישה לשום קובץ אחר ללא הרשאות ספציפיות
+      allow read, write: if false;
+    }
+  }
+} 

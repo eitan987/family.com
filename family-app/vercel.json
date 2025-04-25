@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ],
+  "env": {
+    "NEXT_PUBLIC_BASE_URL": "https://family-app.vercel.app",
+    "NEXT_PUBLIC_API_URL": "https://family-app.vercel.app/api"
+  }
+} 
