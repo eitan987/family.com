@@ -1,0 +1,37 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Set a branch name to trigger deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: './family-app/package-lock.json'
+
+      - name: Install dependencies
+        run: cd family-app && npm ci
+
+      - name: Build and Export
+        run: |
+          cd family-app
+          npm run build
+          touch out/.nojekyll
+        env:
+          GITHUB_ACTIONS: true
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # The branch the action should deploy to
+          folder: family-app/out  # The folder that the build-storybook script generates files
+          clean: true  # Automatically remove deleted files from the deploy branch 

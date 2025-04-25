@@ -5,6 +5,9 @@ const nextConfig = {
   env: {
     BASE_URL: 'http://localhost:3000',
   },
+  // GitHub Pages configuration
+  basePath: process.env.GITHUB_ACTIONS ? '/family.com' : '',
+  assetPrefix: process.env.GITHUB_ACTIONS ? '/family.com/' : '',
   // מאפשר גישה מכל מקור (CORS)
   async headers() {
     return [

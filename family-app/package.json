@@ -18,7 +18,9 @@
     "deploy:vercel:prod": "vercel --prod",
     "deploy:firebase": "firebase deploy",
     "deploy:firebase:hosting": "firebase deploy --only hosting",
-    "deploy:firebase:setup": "firebase login && firebase init"
+    "deploy:firebase:setup": "firebase login && firebase init",
+    "export": "next build && next export",
+    "deploy:github": "npm run export && touch out/.nojekyll"
   },
   "keywords": [],
   "author": "",
