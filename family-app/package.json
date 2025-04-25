@@ -19,8 +19,8 @@
     "deploy:firebase": "firebase deploy",
     "deploy:firebase:hosting": "firebase deploy --only hosting",
     "deploy:firebase:setup": "firebase login && firebase init",
-    "export": "next build && next export",
-    "deploy:github": "npm run export && touch out/.nojekyll"
+    "export": "cross-env NODE_ENV=production next build",
+    "deploy:github": "cross-env NODE_ENV=production NEXT_PUBLIC_BASE_PATH=/family.com npm run export && touch out/.nojekyll && cp src/app/404.tsx out/404.html"
   },
   "keywords": [],
   "author": "",

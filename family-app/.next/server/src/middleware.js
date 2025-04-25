@@ -1,7 +1,7 @@
 // runtime can't be in strict mode because a global variable is assign and maybe created.
 (self["webpackChunk_N_E"] = self["webpackChunk_N_E"] || []).push([[727],{
 
-/***/ 252:
+/***/ 694:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2086,7 +2086,7 @@ const config = {
     ]
 };
 
-;// CONCATENATED MODULE: ./node_modules/next/dist/build/webpack/loaders/next-middleware-loader.js?absolutePagePath=private-next-root-dir%2Fsrc%2Fmiddleware.ts&page=%2Fsrc%2Fmiddleware&rootDir=%2FUsers%2Feitanshlomohiyifrach%2FDocuments%2Ffamily.com%2Ffamily-app&matchers=W3sicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpPyg%2FOlxcLygoPyFhcGlcXC98X25leHRcXC98X3N0YXRpY1xcL3xfdmVyY2VsXFwvfGZhdmljb24uaWNvfHJvYm90cy50eHQpLiopKSguanNvbik%2FW1xcLyNcXD9dPyQiLCJvcmlnaW5hbFNvdXJjZSI6Ii8oKD8hYXBpL3xfbmV4dC98X3N0YXRpYy98X3ZlcmNlbC98ZmF2aWNvbi5pY298cm9ib3RzLnR4dCkuKikifV0%3D&preferredRegion=&middlewareConfig=eyJtYXRjaGVycyI6W3sicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpPyg%2FOlxcLygoPyFhcGlcXC98X25leHRcXC98X3N0YXRpY1xcL3xfdmVyY2VsXFwvfGZhdmljb24uaWNvfHJvYm90cy50eHQpLiopKSguanNvbik%2FW1xcLyNcXD9dPyQiLCJvcmlnaW5hbFNvdXJjZSI6Ii8oKD8hYXBpL3xfbmV4dC98X3N0YXRpYy98X3ZlcmNlbC98ZmF2aWNvbi5pY298cm9ib3RzLnR4dCkuKikifV19!
+;// CONCATENATED MODULE: ./node_modules/next/dist/build/webpack/loaders/next-middleware-loader.js?absolutePagePath=private-next-root-dir%2Fsrc%2Fmiddleware.ts&page=%2Fsrc%2Fmiddleware&rootDir=%2FUsers%2Feitanshlomohiyifrach%2FDocuments%2Ffamily.com%2Ffamily-app&matchers=W3sicmVnZXhwIjoiXlxcL2ZhbWlseVxcLmNvbSg%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpPyg%2FOlxcLygoPyFhcGlcXC98X25leHRcXC98X3N0YXRpY1xcL3xfdmVyY2VsXFwvfGZhdmljb24uaWNvfHJvYm90cy50eHQpLiopKSguanNvbik%2FW1xcLyNcXD9dPyQiLCJvcmlnaW5hbFNvdXJjZSI6Ii8oKD8hYXBpL3xfbmV4dC98X3N0YXRpYy98X3ZlcmNlbC98ZmF2aWNvbi5pY298cm9ib3RzLnR4dCkuKikifV0%3D&preferredRegion=&middlewareConfig=eyJtYXRjaGVycyI6W3sicmVnZXhwIjoiXlxcL2ZhbWlseVxcLmNvbSg%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpPyg%2FOlxcLygoPyFhcGlcXC98X25leHRcXC98X3N0YXRpY1xcL3xfdmVyY2VsXFwvfGZhdmljb24uaWNvfHJvYm90cy50eHQpLiopKSguanNvbik%2FW1xcLyNcXD9dPyQiLCJvcmlnaW5hbFNvdXJjZSI6Ii8oKD8hYXBpL3xfbmV4dC98X3N0YXRpYy98X3ZlcmNlbC98ZmF2aWNvbi5pY298cm9ib3RzLnR4dCkuKikifV19!
 
 
 // Import the userland code.
@@ -2871,7 +2871,7 @@ var __dirname = "/";
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(252));
+/******/ var __webpack_exports__ = (__webpack_exec__(694));
 /******/ (_ENTRIES = typeof _ENTRIES === "undefined" ? {} : _ENTRIES)["middleware_src/middleware"] = __webpack_exports__;
 /******/ }
 ]);
