@@ -26,6 +26,12 @@ jobs:
           cd family-app
           npm run build
           touch out/.nojekyll
+          echo "eitan987.github.io" > out/CNAME
+          cp src/app/not-found.tsx out/404.tsx
+          echo "/* /index.html 200" > out/_redirects
+          echo "include: ['.nojekyll']" > out/_config.yml
+          echo "baseurl: /family.com" >> out/_config.yml
+          echo "permalink: pretty" >> out/_config.yml
         env:
           NODE_ENV: production
           NEXT_PUBLIC_BASE_PATH: /family.com

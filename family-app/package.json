@@ -20,7 +20,7 @@
     "deploy:firebase:hosting": "firebase deploy --only hosting",
     "deploy:firebase:setup": "firebase login && firebase init",
     "export": "cross-env NODE_ENV=production next build",
-    "deploy:github": "cross-env NODE_ENV=production NEXT_PUBLIC_BASE_PATH=/family.com npm run export && touch out/.nojekyll && cp src/app/404.tsx out/404.html"
+    "deploy:github": "cross-env NODE_ENV=production NEXT_PUBLIC_BASE_PATH=/family.com npm run export && touch out/.nojekyll && echo \"eitan987.github.io\" > out/CNAME && echo \"/* /index.html 200\" > out/_redirects && echo \"include: ['.nojekyll']\" > out/_config.yml && echo \"baseurl: /family.com\" >> out/_config.yml"
   },
   "keywords": [],
   "author": "",

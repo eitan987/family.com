@@ -1,0 +1,3 @@
+include: ['.nojekyll']
+baseurl: /family.com
+permalink: pretty 
