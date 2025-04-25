@@ -2,10 +2,25 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // מסלולים שלא דורשים אימות
-const publicPaths = ['/', '/api/auth'];
+const publicPaths = ['/', '/api/auth', '/register', '/forgot-password'];
+
+// קבצים סטטיים שצריך לאפשר גישה אליהם תמיד
+const staticPaths = [
+  '/favicon.ico',
+  '/robots.txt',
+  '/_next',
+  '/images',
+  '/assets',
+];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // בודק אם זה קובץ סטטי
+  const isStaticFile = staticPaths.some(path => pathname.startsWith(path));
+  if (isStaticFile) {
+    return NextResponse.next();
+  }
   
   // בודק אם המסלול הוא ציבורי
   const isPublicPath = publicPaths.some(path => 
@@ -33,6 +48,6 @@ export const config = {
      * 4. /_vercel (Vercel internals)
      * 5. /favicon.ico, /robots.txt (static files)
      */
-    '/((?!api/|_next/|_static/|_vercel/|favicon.ico|robots.txt).*)',
+    '/((?!_next/|_static/|_vercel/|favicon.ico|robots.txt).*)',
   ],
 }; 

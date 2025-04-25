@@ -1,11 +1,1 @@
-{
-  "/personal/page": "app/personal/page.js",
-  "/home/page": "app/home/page.js",
-  "/calendar/page": "app/calendar/page.js",
-  "/page": "app/page.js",
-  "/register/page": "app/register/page.js",
-  "/api/auth/route": "app/api/auth/route.js",
-  "/documents/page": "app/documents/page.js",
-  "/_not-found": "app/_not-found.js",
-  "/tasks/page": "app/tasks/page.js"
-}
+{}

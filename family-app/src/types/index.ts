@@ -53,6 +53,28 @@ export interface Document {
   tags: string[];
 }
 
+// ממשק לפריט ברשימה
+export interface ListItem {
+  id: string;
+  text: string;
+  completed: boolean;
+  category?: string;
+}
+
+// ממשק לרשימה בסיסית
+export interface List {
+  id: string;
+  items: ListItem[];
+}
+
+// ממשק לרשימה מותאמת אישית
+export interface CustomList {
+  id: string;
+  title: string;
+  type: 'shopping' | 'cleaning' | 'general';
+  items: ListItem[];
+}
+
 // סוגי התראות
 export type NotificationType = 'task' | 'event' | 'document' | 'general';
 

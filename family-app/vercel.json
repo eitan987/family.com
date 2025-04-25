@@ -5,6 +5,12 @@
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*\\.(js|json|css|ico|png|jpg|jpeg|svg|webp|gif))", "dest": "/$1" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/" }
+  ],
   "env": {
     "NEXT_PUBLIC_BASE_URL": "https://family-app.vercel.app",
     "NEXT_PUBLIC_API_URL": "https://family-app.vercel.app/api"

@@ -20,7 +20,7 @@
     "deploy:firebase:hosting": "firebase deploy --only hosting",
     "deploy:firebase:setup": "firebase login && firebase init",
     "export": "cross-env NODE_ENV=production next build",
-    "deploy:github": "cross-env NODE_ENV=production NEXT_PUBLIC_BASE_PATH=/family.com npm run export && touch out/.nojekyll && echo \"eitan987.github.io\" > out/CNAME && echo \"/* /index.html 200\" > out/_redirects && echo \"include: ['.nojekyll']\" > out/_config.yml && echo \"baseurl: /family.com\" >> out/_config.yml"
+    "deploy:github": "cross-env NODE_ENV=production NEXT_PUBLIC_BASE_PATH=/family.com npm run export && touch out/.nojekyll && echo \"eitan987.github.io\" > out/CNAME && echo '<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta http-equiv=\"refresh\" content=\"0;url=/family.com/\"></head><body>מפנה לדף הראשי...</body></html>' > out/404.html && echo \"/* /index.html 200\" > out/_redirects && echo \"include: ['.nojekyll']\" > out/_config.yml && echo \"baseurl: /family.com\" >> out/_config.yml"
   },
   "keywords": [],
   "author": "",
@@ -58,15 +58,20 @@
     "@types/node": "^20.8.9",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
-    "autoprefixer": "^10.4.16",
+    "autoprefixer": "^10.4.21",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
     "eslint": "^8.52.0",
     "eslint-config-next": "14.0.0",
     "firebase-tools": "^13.5.0",
     "nodemon": "^3.0.1",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5",
+    "postcss": "^8.5.3",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-import": "^16.1.0",
+    "postcss-preset-env": "^10.1.6",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.2.2",
     "vercel": "^33.3.0"
   }

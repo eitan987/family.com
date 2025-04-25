@@ -3,11 +3,11 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   env: {
-    BASE_URL: 'http://localhost:3000',
+    BASE_URL: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
   },
-  // GitHub Pages configuration
-  basePath: process.env.NODE_ENV === 'production' ? '/family.com' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/family.com/' : '',
+  // התצורה תלויה בסביבה
+  basePath: process.env.VERCEL_ENV === 'production' ? '' : '',
+  assetPrefix: process.env.VERCEL_ENV === 'production' ? '' : '',
   // מאפשר גישה מכל מקור (CORS)
   async headers() {
     return [
@@ -40,8 +40,8 @@ const nextConfig = {
   crossOrigin: 'anonymous',
   // תיקון בעיות תאימות והפניות
   trailingSlash: false,
-  // חיבור למתקין 
-  output: 'export',
+  // שימוש ב-distDir רגיל עבור Vercel
+  distDir: '.next',
   compiler: {
     // שימוש ב-emotion עם react
     emotion: true,

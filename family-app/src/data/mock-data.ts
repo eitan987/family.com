@@ -199,4 +199,168 @@ export const documentsData = [
     uploadedBy: 2, // דנה
     tags: ['ציורים', 'אמנות']
   }
-]; 
+];
+
+// נתוני רשימות מובנות
+export const listsData = {
+  // רשימת קניות למשפחה
+  shopping: [
+    {
+      id: 'shop1',
+      text: 'חלב',
+      completed: false,
+      category: 'מוצרי חלב'
+    },
+    {
+      id: 'shop2',
+      text: 'לחם',
+      completed: true,
+      category: 'מאפים'
+    },
+    {
+      id: 'shop3',
+      text: 'ביצים',
+      completed: false,
+      category: 'מוצרי חלב'
+    },
+    {
+      id: 'shop4',
+      text: 'עגבניות',
+      completed: false,
+      category: 'ירקות ופירות'
+    },
+    {
+      id: 'shop5',
+      text: 'תפוחים',
+      completed: false,
+      category: 'ירקות ופירות'
+    },
+    {
+      id: 'shop6',
+      text: 'גבינה צהובה',
+      completed: false,
+      category: 'מוצרי חלב'
+    },
+    {
+      id: 'shop7',
+      text: 'נייר טואלט',
+      completed: true,
+      category: 'ניקיון'
+    }
+  ],
+  
+  // רשימת ניקיון לבית
+  cleaning: [
+    {
+      id: 'clean1',
+      text: 'שטיפת רצפות',
+      completed: false,
+      category: 'כללי'
+    },
+    {
+      id: 'clean2',
+      text: 'ניקוי אסלה',
+      completed: false,
+      category: 'שירותים ואמבטיה'
+    },
+    {
+      id: 'clean3',
+      text: 'ניקוי כיור',
+      completed: true,
+      category: 'מטבח'
+    },
+    {
+      id: 'clean4',
+      text: 'סידור ארון בגדים',
+      completed: false,
+      category: 'חדר שינה'
+    },
+    {
+      id: 'clean5',
+      text: 'ניקוי אבק',
+      completed: false,
+      category: 'סלון'
+    }
+  ],
+  
+  // רשימה כללית
+  general: [
+    {
+      id: 'gen1',
+      text: 'להחליף נורה בסלון',
+      completed: false
+    },
+    {
+      id: 'gen2',
+      text: 'לשלם חשבון חשמל',
+      completed: true
+    },
+    {
+      id: 'gen3',
+      text: 'להזמין תור לרופא שיניים',
+      completed: false
+    },
+    {
+      id: 'gen4',
+      text: 'לרשום את דני לחוג כדורגל',
+      completed: false
+    }
+  ],
+  
+  // רשימות מותאמות אישית
+  custom: [
+    {
+      id: 'custom1',
+      title: 'מתנות יום הולדת לשירה',
+      type: 'general',
+      items: [
+        {
+          id: 'gift1',
+          text: 'ספר ציור',
+          completed: true
+        },
+        {
+          id: 'gift2',
+          text: 'ערכת אומנות',
+          completed: false
+        },
+        {
+          id: 'gift3',
+          text: 'בובה',
+          completed: false
+        }
+      ]
+    },
+    {
+      id: 'custom2',
+      title: 'ארוחת ערב משפחתית',
+      type: 'shopping',
+      items: [
+        {
+          id: 'dinner1',
+          text: 'בשר טחון',
+          completed: false,
+          category: 'בשר ודגים'
+        },
+        {
+          id: 'dinner2',
+          text: 'תפוחי אדמה',
+          completed: false,
+          category: 'ירקות ופירות'
+        },
+        {
+          id: 'dinner3',
+          text: 'ירקות לסלט',
+          completed: true,
+          category: 'ירקות ופירות'
+        },
+        {
+          id: 'dinner4',
+          text: 'לחם',
+          completed: false,
+          category: 'מאפים'
+        }
+      ]
+    }
+  ]
+}; 

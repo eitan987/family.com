@@ -27,7 +27,7 @@ jobs:
           npm run build
           touch out/.nojekyll
           echo "eitan987.github.io" > out/CNAME
-          cp src/app/not-found.tsx out/404.tsx
+          echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/family.com/"></head><body>מפנה לדף הראשי...</body></html>' > out/404.html
           echo "/* /index.html 200" > out/_redirects
           echo "include: ['.nojekyll']" > out/_config.yml
           echo "baseurl: /family.com" >> out/_config.yml
